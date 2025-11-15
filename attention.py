@@ -1,8 +1,8 @@
-%%manim -ql Attention
+%%manim -qh Attention
 
 class Attention(Scene):
     def construct(self):
-        title = Text('Attention').to_edge(UP)
+        title = Text('Atenção').to_edge(UP)
         self.play(Write(title))
         self.wait(3)
         
