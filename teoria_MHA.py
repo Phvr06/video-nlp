@@ -5,9 +5,11 @@ from manim import config
 class MHA(Scene):
     def construct(self):
         title = Text("Multi-Head Attention").to_edge(UP)
-        g = Text("galinha").scale(0.8)
-        v0 = Matrix([[1.3, -2.1, 0.6, -1.7]]).set_color(RED).scale(0.8).set_stroke(width=2)
         self.add(title)
+
+        frase = Text("O gato viu ela correr", font_size=40).shift(UP * 0.5)
+        g = Text("ela")
+        v0 = Matrix([[1.3, -2.1, 0.6, -1.7]]).set_color(RED).scale(0.8).set_stroke(width=2)
         
         b1 = Rectangle(height=1, width=2.5, fill_opacity=1, fill_color=GREEN, stroke_color=GREEN)
         at1 = Text("attention", color=WHITE, weight=SEMIBOLD, font_size=26)
@@ -23,10 +25,15 @@ class MHA(Scene):
         current_center = content_group.get_center()
         dy = target_center_y - current_center[1]
         content_group.shift(UP * dy)
-        
-        self.play(FadeIn(g), runtime=0.5)
+
+         # Mostrar a frase completa
+        self.play(Write(frase), runtime=1)
         self.wait(1)
-        self.play(Transform(g, v0), runtime=0.5)
+
+        self.play(FadeOut(frase), FadeIn(g, scale=1.2))
+        self.wait(0.5)
+        self.wait(1)
+        self.play(Transform(g, v0))
         self.wait(0.2)
         v0 = g
         
@@ -35,7 +42,7 @@ class MHA(Scene):
         a1 = Arrow(start=v0, end=r1.get_left()).set_color(GREEN)
         a2 = Arrow(start=v0, end=r2.get_left()).set_color(BLUE_E)
         self.play(FadeIn(gr), GrowArrow(a1), GrowArrow(a2))
-        self.wait(0.5)
+        self.wait(1.5)
         
         q1 = Tex(r"$\mathbf{Q_{1}}$", color=GREEN).scale(0.5)
         k1 = Tex(r"$\mathbf{K_{1}}$", color=GREEN).scale(0.5)
@@ -92,7 +99,7 @@ class MHA(Scene):
 
         self.play(Indicate(b1, scale_factor=1.1, color=GREEN), Indicate(at1, scale_factor=1.1, color=WHITE), 
                   Indicate(gqkv1, scale_factor=1.1, color=GREEN))
-        self.wait(1)
+        self.wait(2.5)
         
         self.play(FadeOut(v1_elements), Create(v1_transformed), runtime=0.8)
         self.wait(0.5)
@@ -111,7 +118,7 @@ class MHA(Scene):
 
         self.play(Indicate(b2, scale_factor=1.1, color=BLUE_E), Indicate(at2, scale_factor=1.1, color=WHITE), 
                   Indicate(gqkv2, scale_factor=1.1, color=BLUE_E))
-        self.wait(1)
+        self.wait(2.5)
         
         self.play(FadeOut(v2_elements), Create(v2_transformed), runtime=0.8)
         self.wait(0.5)
@@ -133,7 +140,18 @@ class MHA(Scene):
         # Resultado final concatenado
         final_result = Matrix([[0.8, -1.5, 0.4, -1.2]]).set_color(YELLOW).scale(0.6).set_stroke(width=2)
         final_result.move_to(concat_box.get_center())
+        final_result2 = Matrix([[0.8, -1.5, 0.4, -1.2]]).set_stroke(width=2).shift(UP * 0.8)
+
+        subtext = Text('O vetor de "ela" agora carrega o significado', font_size=36).next_to(final_result2, DOWN*3)
+        subtext2 = Text('"correto" de todas as palavras da frase!', font_size=36).next_to(subtext, DOWN)
         
         self.play(FadeOut(concat_box), Create(final_result))
-        self.wait(1)
-        
+        self.wait(3)
+
+        tudo = VGroup(a1, a2, gr, v0, v1, gqkv2, gqkv1, concat_box, arrow_to_concat_1, arrow_to_concat_2, v2_transformed, v1_transformed)
+
+        self.play(FadeOut(tudo), Transform(final_result, final_result2))
+        self.wait(0.5)
+        self.play(Write(VGroup(subtext, subtext2)))
+
+        self.wait(3)
